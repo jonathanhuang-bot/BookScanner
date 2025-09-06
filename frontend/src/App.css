@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* CSS Reset for body */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  background-color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}

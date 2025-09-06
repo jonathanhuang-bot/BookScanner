@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="AI Book Recommendations - Identify books from bookshelf photos and get personalized recommendations based on your preferences.">
+    <title>BookScanner - AI Book Recommendations</title>
+    
+    <!-- Emoji favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col bg-white">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-20">
+            <div class="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                        </svg>
+                        <span class="text-lg font-medium text-gray-900">BookScanner</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto">
+            <div class="p-6 sm:p-8 lg:p-10 max-w-6xl mx-auto">
+                
+                <!-- Hero Section -->
+                <div class="mb-10 max-w-3xl">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-3">AI bookshelf scanner and book recommender</h1>
+                    <p class="text-xl text-gray-600 mb-6">Find the perfect book for you from any bookshelf.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="preferences.html">
+                            <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm h-10 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                Start Scanning
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Feature Card -->
+                <div class="my-12">
+                    <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex items-start">
+                                <div class="bg-violet-50 text-violet-600 h-10 w-10 rounded-full flex items-center justify-center mr-4 shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">AI Book Discovery</h2>
+                                    <p class="text-gray-600 mt-1">Take a photo of an entire bookshelf at stores, the library, or a friend's house, and we'll help you figure out which ones you'll like!</p>
+                                    <a href="preferences.html" class="flex items-center text-black hover:text-gray-800 font-medium text-sm mt-3">
+                                        <span>Start scanning</span>
+                                        <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="mt-16">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">How It Works</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-amber-100 text-amber-600 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                    <span class="font-semibold">1</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Set Preferences</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Tell us about your reading interests or upload your Goodreads data for personalized recommendations.</p>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-amber-100 text-amber-600 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                    <span class="font-semibold">2</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Upload Photo</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Take a photo of any bookshelf and our AI will identify each book automatically.</p>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-amber-100 text-amber-600 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                    <span class="font-semibold">3</span>
+                                </div>
+                                <h3 class="font-medium text-gray-900">Get Recommendations</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Discover which books best match your taste with our AI-powered recommendation engine.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="mt-16 text-center">
+                    <div class="inline-flex justify-center items-center bg-violet-50 text-violet-600 h-12 w-12 rounded-full mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M12 3v12"></path>
+                            <path d="m8 11 4 4 4-4"></path>
+                            <path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-3">Start Using BookScanner Today</h2>
+                    <p class="text-gray-600 max-w-xl mx-auto mb-6">Never miss a great book again. Our app helps you quickly find books that match your unique reading preferences even in a crowded bookshelf.</p>
+                    <a href="preferences.html">
+                        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm h-10 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium">
+                            Get Started Now
+                        </button>
+                    </a>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-20 pt-6 border-t border-gray-200">
+                    <div class="flex flex-col md:flex-row justify-center items-center text-xs text-gray-500 space-y-2 md:space-y-0 md:space-x-6">
+                        <span>© 2025 BookScanner. All rights reserved.</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
