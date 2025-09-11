@@ -1,21 +1,10 @@
 import { Link } from 'wouter'
+import Header from '../components/Header'
 
 function Home() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
-        <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-              </svg>
-              <span className="text-lg font-medium text-gray-900">BookScanner</span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="w-full">
