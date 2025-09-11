@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, JSON
+from sqlalchemy.types import Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import UUID
@@ -57,6 +58,20 @@ class BookCache(Base):
     book_metadata = Column(JSON)  # Additional book info - renamed from 'metadata'
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     expires_at = Column(DateTime)  # When cache expires
+
+class SavedBooks(Base):
+    __tablename__ = "saved_books"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(UUID(as_uuid=True), nullable=False)  # Links to User.id
+    title = Column(String, nullable=False)
+    author = Column(String, nullable=False)
+    match_score = Column(Integer)  # Original match score when recommended
+    match_reason = Column(Text)    # Why it was recommended
+    source_session_id = Column(UUID(as_uuid=True))  # Which analysis session it came from
+    additional_notes = Column(Text)  # User can add personal notes
+    saved_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    is_read = Column(Boolean, default=False)  # User can mark as read later
 
 def create_tables():
     Base.metadata.create_all(bind=engine)
@@ -156,5 +171,135 @@ def get_user_analysis_history(user_id: str, limit: int = 10):
                     .limit(limit)\
                     .all()
         return sessions
+    finally:
+        db.close()
+
+def save_book(user_id: str, title: str, author: str, match_score: int = None, match_reason: str = None, source_session_id: str = None):
+    db = SessionLocal()
+    try:
+        book = db.query(SavedBooks).filter(
+            SavedBooks.user_id == user_id,
+            SavedBooks.title == title,
+            SavedBooks.author == author
+        ).first()
+
+        if book:
+            return {"already_saved": True, "message": "Book already in reading list"}
+        else:
+            new_book = SavedBooks(
+                user_id=user_id,
+                title=title,
+                author=author,
+                match_score=match_score,
+                match_reason=match_reason,
+                source_session_id=source_session_id
+            )
+            db.add(new_book)
+            db.commit()
+            db.refresh(new_book)
+            return {"success": True, "message": "Book saved successfully", "book_id": new_book.id}
+    except Exception as e:
+        db.rollback()  # Undo any partial changes
+        return {"success": False, "message": f"Failed to save book: {str(e)}"}
+    finally:
+        db.close()
+
+
+def unsave_book(user_id: str, title: str, author: str):
+    db = SessionLocal()
+    try:
+        book = db.query(SavedBooks).filter(
+            SavedBooks.user_id == user_id,
+            SavedBooks.title == title,
+            SavedBooks.author == author
+        ).first()
+        if book:
+            db.delete(book)
+            db.commit()
+            return {"success": True, "message": "Book removed from reading list"}
+        else:
+            return {"success": False, "message": "Book not found in reading list"}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "message": f"Failed to remove book: {str(e)}"}
+    finally:
+        db.close()
+
+def get_saved_books(user_id: str, limit: int = 50):
+    db = SessionLocal()
+    try:
+        books = db.query(SavedBooks)\
+                 .filter(SavedBooks.user_id == user_id)\
+                 .order_by(SavedBooks.saved_at.desc())\
+                 .limit(limit)\
+                 .all()
+        
+        # Convert to dictionaries for safe return
+        result = []
+        for book in books:
+            result.append({
+                'id': book.id,
+                'user_id': str(book.user_id),
+                'title': book.title,
+                'author': book.author,
+                'match_score': book.match_score,
+                'match_reason': book.match_reason,
+                'source_session_id': str(book.source_session_id) if book.source_session_id else None,
+                'additional_notes': book.additional_notes,
+                'saved_at': book.saved_at.isoformat() if book.saved_at else None,
+                'is_read': book.is_read
+            })
+        return result
+    finally:
+        db.close()
+
+def check_if_book_saved(user_id: str, title: str, author: str):
+    db = SessionLocal()
+    try:
+        book = db.query(SavedBooks).filter(
+            SavedBooks.user_id == user_id,
+            SavedBooks.title == title,
+            SavedBooks.author == author
+        ).first()
+        return book is not None
+    finally:
+        db.close()
+
+def mark_book_as_read(user_id: str, book_id: int, is_read: bool = True):
+    db = SessionLocal()
+    try:
+        book = db.query(SavedBooks).filter(
+            SavedBooks.user_id == user_id,
+            SavedBooks.id == book_id
+        ).first()
+        
+        if book:
+            book.is_read = is_read
+            db.commit()
+            return {"success": True, "message": f"Book marked as {'read' if is_read else 'unread'}"}
+        else:
+            return {"success": False, "message": "Book not found"}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "message": f"Failed to update book status: {str(e)}"}
+    finally:
+        db.close()
+
+def update_book_notes(user_id: str, book_id: int, notes: str):
+    db = SessionLocal()
+    try:
+        book = db.query(SavedBooks).filter(
+            SavedBooks.user_id == user_id,
+            SavedBooks.id == book_id
+        ).first()
+        if book:
+            book.additional_notes = notes
+            db.commit()
+            return {"success": True, "message": f"Notes saved successfully"}
+        else:
+            return {"success": False, "message": "Book not found"}
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "message": f"Failed to update book notes: {str(e)}"}
     finally:
         db.close()

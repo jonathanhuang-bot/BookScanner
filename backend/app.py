@@ -10,7 +10,13 @@ from database import (
     save_user_preferences,
     save_analysis_session,
     get_user_analysis_history,
-    create_tables
+    create_tables,
+    save_book,
+    unsave_book,
+    get_saved_books,
+    check_if_book_saved,
+    mark_book_as_read,
+    update_book_notes
 )
 
 app = Flask(__name__)
@@ -217,5 +223,243 @@ def get_history():
     except Exception as e:
         print(f"❌ Error getting history: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books', methods=['GET'])
+def get_user_saved_books():
+    """Get user's saved books/reading list"""
+    try:
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        print(f"📚 Getting saved books for user: {user['id']}")
+        
+        # Get saved books
+        books = get_saved_books(user['id'])
+        
+        response_data = {
+            'user_id': user['id'],
+            'books': books,
+            'total_books': len(books)
+        }
+        
+        response = make_response(jsonify(response_data))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error getting saved books: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books', methods=['POST'])
+def save_user_book():
+    """Save a book to user's reading list"""
+    try:
+        data = request.get_json()
+        title = data.get('title')
+        author = data.get('author')
+        match_score = data.get('match_score')
+        match_reason = data.get('match_reason')
+        source_session_id = data.get('source_session_id')
+        
+        if not title or not author:
+            return jsonify({'error': 'Title and author are required'}), 400
+        
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        print(f"💾 Saving book for user: {user['id']} - '{title}' by {author}")
+        
+        # Save book
+        result = save_book(user['id'], title, author, match_score, match_reason, source_session_id)
+        
+        response = make_response(jsonify(result))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error saving book: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books', methods=['DELETE'])
+def unsave_user_book():
+    """Remove a book from user's reading list"""
+    try:
+        title = request.args.get('title')
+        author = request.args.get('author')
+        
+        if not title or not author:
+            return jsonify({'error': 'Title and author are required'}), 400
+        
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        print(f"🗑️ Removing book for user: {user['id']} - '{title}' by {author}")
+        
+        # Remove book
+        result = unsave_book(user['id'], title, author)
+        
+        response = make_response(jsonify(result))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error removing book: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books/check', methods=['GET'])
+def check_book_saved():
+    """Check if a book is already saved"""
+    try:
+        title = request.args.get('title')
+        author = request.args.get('author')
+        
+        if not title or not author:
+            return jsonify({'error': 'Title and author are required'}), 400
+        
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        
+        # Check if book is saved
+        is_saved = check_if_book_saved(user['id'], title, author)
+        
+        response_data = {
+            'is_saved': is_saved,
+            'title': title,
+            'author': author
+        }
+        
+        response = make_response(jsonify(response_data))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error checking book status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books/<int:book_id>/read', methods=['PUT'])
+def update_book_read_status(book_id):
+    """Mark book as read/unread"""
+    try:
+        data = request.get_json()
+        is_read = data.get('is_read', True)
+        
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        print(f"📖 Updating read status for user: {user['id']} - book_id: {book_id}")
+        
+        # Update read status
+        result = mark_book_as_read(user['id'], book_id, is_read)
+        
+        response = make_response(jsonify(result))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error updating read status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/saved-books/<int:book_id>/notes', methods=['PUT'])
+def update_book_notes_endpoint(book_id):
+    """Update book notes"""
+    try:
+        data = request.get_json()
+        notes = data.get('notes', '')
+        
+        # Get device ID from middleware
+        device_id = request.device_id
+        
+        # Get or create user
+        user = get_or_create_user(device_id)
+        print(f"📝 Updating notes for user: {user['id']} - book_id: {book_id}")
+        
+        # Update notes
+        result = update_book_notes(user['id'], book_id, notes)
+        
+        response = make_response(jsonify(result))
+        
+        # Set/refresh device ID cookie
+        response.set_cookie(
+            'deviceId', 
+            device_id,
+            max_age=365*24*60*60,
+            path='/',
+            samesite='Strict',
+            httponly=False,
+            secure=False
+        )
+        
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error updating book notes: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
     app.run(debug=True, port = 5000)

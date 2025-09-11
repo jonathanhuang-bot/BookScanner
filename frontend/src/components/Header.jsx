@@ -45,6 +45,17 @@ function Header() {
                                         View History
                                     </button>
                                 </Link>
+                                <Link href="/saved-books">
+                                    <button 
+                                        className="flex items-center gap-3 w-full px-4 py-2 text-sm text-white hover:bg-gray-50 transition-colors"
+                                        onClick={() => setDropdownOpen(false)}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Reading List
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     )}

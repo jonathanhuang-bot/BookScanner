@@ -7,6 +7,7 @@ import Preferences from './pages/Preferences'
 import Upload from './pages/Upload'
 import Results from './pages/Results'
 import History from './pages/History'
+import SavedBooks from './pages/SavedBooks'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/upload" component={Upload} />
             <Route path="/results" component={Results} />
             <Route path="/history" component={History} />
+            <Route path="/saved-books" component={SavedBooks} />
             <Route>404: Not Found</Route>
           </Switch>
           <DeviceDebugInfo />

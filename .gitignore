@@ -4,3 +4,40 @@ test.JPG
 test.jpg
 *.csv
 
+# Environment variables (contains sensitive API keys)
+backend/.env
+.env
+
+# Python cache files
+backend/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node modules (if any)
+node_modules/
+frontend/node_modules/
+
+# Build directories
+frontend/dist/
+frontend/build/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Docker installation scripts
+get-docker.sh
+install-docker.sh
+
