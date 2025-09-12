@@ -4,6 +4,10 @@ import base64
 import tempfile
 import os
 import uuid
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 from ai_services import analyze_bookshelf, generate_recommendations, load_goodreads_preferences, extract_goodreads_preferences
 from database import (
     get_or_create_user,
@@ -20,7 +24,10 @@ from database import (
 )
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)  # Enable cookies for CORS
+
+# Configure CORS for development and production
+allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173').split(',')
+CORS(app, supports_credentials=True, origins=allowed_origins)
 
 try:
     create_tables()
@@ -462,4 +469,7 @@ def update_book_notes_endpoint(book_id):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True, port = 5000)
+    # Get port from environment (Railway/Render provide this)
+    port = int(os.getenv("PORT", 5000))
+    debug = os.getenv("FLASK_DEBUG", "False").lower() == "true"
+    app.run(debug=debug, host="0.0.0.0", port=port)

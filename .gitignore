@@ -6,6 +6,7 @@ test.jpg
 
 # Environment variables (contains sensitive API keys)
 backend/.env
+frontend/.env
 .env
 
 # Python cache files
